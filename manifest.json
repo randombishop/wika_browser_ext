@@ -1,0 +1,26 @@
+{
+  "name": "Wika Network",
+  "description": "Official Google Chrome plug-in to interact with Wika Network blockchain",
+  "version": "1.0",
+  "manifest_version": 2,
+  "permissions": ["storage","activeTab"],
+  "background": {
+      "scripts": [
+        "/libs/polkadot/api.js",
+        "/background/network.js",
+        "/background/background.js"
+      ],
+      "persistent": true
+    },
+  "browser_action": {
+    "default_title": "Wika Network",
+    "default_popup": "popup.html"
+  },
+  "icons": {
+    "16": "/images/logo16.png",
+    "32": "/images/logo32.png",
+    "48": "/images/logo48.png",
+    "128": "/images/logo128.png"
+  },
+  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+}
