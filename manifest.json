@@ -22,7 +22,15 @@
     "128": "/images/logo128.png"
   },
   "content_scripts": [{
-      "js": ["widget/div1_logo.js","widget/inject.js"],
+      "js": [
+        "widget/code.js",
+        "widget/div1_logo.js",
+        "widget/div2_page_likes.js",
+        "widget/div3_my_likes.js",
+        "widget/div4_balance.js",
+        "widget/div5_move.js",
+        "widget/inject.js"
+      ],
       "matches": ["*://*/*"],
       "all_frames": false
   }],
