@@ -12,16 +12,16 @@ const HTML_DIV3_MY_LIKES = `
             />
         </div>
         <div style="margin-left:10px;line-height:42px">
-            <button class="wika-widget-elements" 
+            <button id="wika-widget-like-button"
+                    class="wika-widget-elements" 
                     style="height: 32px;
-                           width: 110px;
+                           width: 120px;
                            border: 1px solid lightgray; 
                            border-radius: 3px;
                            font-size: 16px;
-                           font-weight: bold;
                            background: darkgray;
                            color: white;">
-                Send 100 &#128077;
+                <span class="wika-widget-like-button-text">Send 100 &#128077;</span>
             </button>
         </div>
     </div>

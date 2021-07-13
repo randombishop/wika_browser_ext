@@ -29,6 +29,7 @@
         "widget/div3_my_likes.js",
         "widget/div4_balance.js",
         "widget/div5_move.js",
+        "widget/css.js",
         "widget/inject.js"
       ],
       "matches": ["*://*/*"],

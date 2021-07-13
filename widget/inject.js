@@ -12,7 +12,8 @@ let HTML_DIV4 = getHtmlDiv4(128.45) ;
 let HTML_DIV5 = getHtmlDiv5() ;
 
 let HTML_DIV_WIDGET = `
-    <div class="wika-widget-elements" 
+    <div id="wika-widget-fixed-div"
+         class="wika-widget-elements" 
          style="position: fixed;
                 bottom: 22px;
                 right: 32px;
@@ -48,12 +49,6 @@ document.body.appendChild(widget) ;
 
 
 // Add CSS
-let CSS_WIDGET = `
-    .wika-widget-elements {
-      all: revert;
-      font-family: system-ui;
-    }
-`;
 var style = document.createElement('style');
 style.innerHTML = CSS_WIDGET;
 document.head.appendChild(style);
