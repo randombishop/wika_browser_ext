@@ -1,17 +1,4 @@
 
-First prototype:
- - Open source and deploy
-
-Next features:
-- Error management: Replace alert with header error bar
-- Network selection (test net/main net)
-- Address change
-- Wallet
-
-
-Will require building wika.network web server:
-- Claim a page test button
-- History
-- Owned pages
+- Inject widget in webpages
 
 
