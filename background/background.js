@@ -1,60 +1,58 @@
-
 const BACKGROUND = {
-    cryptoReady: false,
-    network: null
+    on: false
 }
 
-function bytesToHex(byteArray) {
-    var s = '0x';
-    byteArray.forEach(function (byte) {
-        s += ('0' + (byte & 0xFF).toString(16)).slice(-2);
-    });
-    return s;
+const WIKA_APP_URL = "http://localhost:3000/"
+
+
+function selectWikaApp(tabId) {
+    chrome.tabs.update(tabId, {active: true, pinned: true}) ;
 }
 
-window.loadCrypto = (callback) => {
-    if (BACKGROUND.cryptoReady) {
-        callback() ;
+function openWikaApp() {
+    findWikaTab((tab) => {
+        if (tab) {
+            selectWikaApp(tab.id) ;
+        } else {
+            chrome.tabs.create({url: WIKA_APP_URL, pinned: true }) ;
+        }
+    }) ;
+}
+
+function findWikaTab(callback) {
+    chrome.tabs.query({url: WIKA_APP_URL+'*'}, (tabs) => {
+        if (tabs.length>0) {
+            callback(tabs[0]) ;
+        } else {
+            callback(null) ;
+        }
+    }) ;
+}
+
+function checkWikaApp() {
+    if (BACKGROUND.wikaTabId!=null) {
+        pingWikaApp() ;
     } else {
-        polkadot_crypto.cryptoWaitReady().then(() => {
-            BACKGROUND.cryptoReady = true ;
-            callback() ;
+        findWikaTab((tab) => {
+            if (tab) {
+                BACKGROUND.wikaTabId = tab.id ;
+                pingWikaApp() ;
+            } else {
+                BACKGROUND.on = false ;
+                chrome.browserAction.setBadgeBackgroundColor({color:'red'}) ;
+                chrome.browserAction.setBadgeText({text:'OFF'}) ;
+            }
         }) ;
     }
 }
 
-window.connectNetwork = (callback) => {
-    if (BACKGROUND.network) {
-        callback(BACKGROUND.network) ;
-    } else {
-        let network = new WikaNetwork() ;
-        network.connect(() => {
-            BACKGROUND.network = network ;
-            callback(BACKGROUND.network) ;
-        }) ;
-    }
+function pingWikaApp() {
+    alert('pingWikaApp') ;
 }
 
-window.closeNetwork = (callback) => {
-    if (!BACKGROUND.network) {
-        callback() ;
-    } else {
-        BACKGROUND.network.disconnect(callback) ;
-    }
-}
 
-window.importAccount = (phrase) => {
-    let keyring = new window.polkadot_api.Keyring({ type: 'sr25519' });
-    let newPair = keyring.addFromUri(phrase) ;
-    let account = {
-        address: newPair.address,
-        addressRaw: bytesToHex(newPair.addressRaw),
-        phrase: phrase
-    } ;
-    return account ;
-}
+chrome.browserAction.onClicked.addListener(openWikaApp) ;
 
-window.generateNewAccount = () => {
-    let phrase = polkadot_crypto.mnemonicGenerate(12);
-    return window.importAccount(phrase) ;
-}
+
+
+pingWikaApp() ;

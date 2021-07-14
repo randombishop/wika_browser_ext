@@ -19,7 +19,7 @@ let HTML_DIV_WIDGET = `
                 right: 32px;
                 zIndex: 9999;
                 display: flex;
-                width: 520px;
+                width: 550px;
                 height: 42px;
                 border: solid 1px gray;
                 border-radius: 15px;

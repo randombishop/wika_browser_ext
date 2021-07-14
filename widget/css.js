@@ -13,6 +13,10 @@ const CSS_WIDGET = `
       cursor: pointer;
     }
     
+    #wika-widget-logo:hover {
+      cursor: pointer;
+    }
+    
     #wika-widget-like-button:hover .wika-widget-like-button-text{
       font-weight: bold;
     }
