@@ -48,12 +48,15 @@ function setBadgeOn(on) {
 function setOn(on) {
     BACKGROUND.on = on ;
     setBadgeOn(on) ;
+    // TODO: this should only happen if there's a change in state to avoid wasting messages
+    broadcastState() ;
 }
 
 function pingTab(callback) {
-    chrome.tabs.sendMessage(BACKGROUND.tab, "ping", function(response) {
+    var msg = {type:"Ping"} ;
+    chrome.tabs.sendMessage(BACKGROUND.tab, msg, function(response) {
         if (!window.chrome.runtime.lastError) {
-            callback(response=="pong") ;
+            callback(response.type=="Pong") ;
         } else {
             callback(false) ;
         }
@@ -64,7 +67,7 @@ function checkWikaApp() {
     if (BACKGROUND.tab) {
         pingTab((pong) => {
             if (pong) {
-                getAccount() ;
+                sendAccountReq() ;
             } else {
                 setOn(false) ;
             }
@@ -74,14 +77,31 @@ function checkWikaApp() {
     }
 }
 
-function getAccount(callback) {
-    chrome.tabs.sendMessage(BACKGROUND.tab, {action: "getAccount"});
+function sendAccountReq(callback) {
+    chrome.tabs.sendMessage(BACKGROUND.tab, {type: "AccountReq"});
 }
 
-function getAccountResponse(msg) {
+function receiveAccountRes(msg) {
     BACKGROUND.account = msg.account ;
     BACKGROUND.balance = msg.balance ;
     setOn(msg.account!=null) ;
+}
+
+function broadcastState() {
+    var msg = {
+        type: 'AccountInfo',
+        account: BACKGROUND.account,
+        balance: BACKGROUND.balance,
+        on: BACKGROUND.on
+    }
+    chrome.tabs.query({currentWindow:true}, (tabs) => {
+        if (!window.chrome.runtime.lastError) {
+            for (var i in tabs) {
+                var tabId = tabs[i].id ;
+                chrome.tabs.sendMessage(tabId, msg);
+            }
+        }
+    }) ;
 }
 
 
@@ -94,10 +114,10 @@ function getAccountResponse(msg) {
 chrome.browserAction.onClicked.addListener(openWikaApp) ;
 
 chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
+  function(msg, sender, sendResponse) {
       if (sender.tab && sender.tab.id==BACKGROUND.tab) {
-          switch (request.response) {
-              case 'getAccount': getAccountResponse(request) ;
+          switch (msg.type) {
+              case 'AccountRes': receiveAccountRes(msg) ;
           }
       }
   }

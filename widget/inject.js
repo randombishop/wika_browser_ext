@@ -14,7 +14,8 @@ let HTML_DIV5 = getHtmlDiv5() ;
 let HTML_DIV_WIDGET = `
     <div id="wika-widget-fixed-div"
          class="wika-widget-elements" 
-         style="position: fixed;
+         style="visibility:hidden;
+                position: fixed;
                 bottom: 22px;
                 right: 32px;
                 zIndex: 9999;
@@ -56,3 +57,24 @@ document.head.appendChild(style);
 
 
 
+
+// Update Widget
+function updateWidgetWithAccountInfo(msg) {
+    var element = document.getElementById("wika-widget-fixed-div") ;
+    if (element) {
+        element.style.visibility = msg.on?'visible':'hidden' ;
+    }
+}
+
+
+
+
+// Listen to messages from the extension background
+chrome.runtime.onMessage.addListener(
+    function (msg, sender, sendResponse) {
+        if (msg.type=='AccountInfo') {
+            updateWidgetWithAccountInfo(msg) ;
+            sendResponse({type:'Ack'}) ;
+        }
+    }
+);

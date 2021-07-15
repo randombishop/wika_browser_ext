@@ -1,22 +1,23 @@
 
-// Listen to messages from the extension background and forward them to the window
+// Listen to messages from the extension background
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
-        if (request=='ping') {
-            sendResponse('pong') ;
-        } else if (request.action) {
+        if (request.type=='Ping') {
+            sendResponse({type:'Pong'}) ;
+        } else if (request.type=='AccountReq') {
             window.postMessage(request, "http://localhost:3000/*");
-            sendResponse("ok") ;
+            sendResponse({type:'Ack'}) ;
         }
     }
 );
 
 
-// Listen to messages from the wika app page and forward them to the extension
-// (We only forward messages from same page with field response present.)
+// Listen to messages from the wika app page
 window.addEventListener("message", function (event) {
-    if (event.source==window && event.data.response) {
-        chrome.runtime.sendMessage(event.data) ;
+    if (event.source!=window) return ;
+    var msg = event.data ;
+    switch (msg.type) {
+        case 'AccountRes': chrome.runtime.sendMessage(msg) ;
     }
 }, false);
 

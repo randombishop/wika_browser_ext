@@ -1,9 +1,9 @@
 const JS_CODE = `
 
-    function getAccount() {
+    function sendAccountResponse() {
         var state = window.wikaReactApp.state ;
         var msg = {
-            response: 'getAccount',
+            type: 'AccountRes',
             account: state.account,
             balance: state.balance
         }
@@ -12,9 +12,9 @@ const JS_CODE = `
     
     window.addEventListener("message", function (event) {
         var data = event.data ;
-        if (data.action) {
-            switch (data.action) {
-                case 'getAccount': getAccount();
+        if (data.type) {
+            switch (data.type) {
+                case 'AccountReq': sendAccountResponse();
             }
         }
     }, false);
