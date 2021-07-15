@@ -115,10 +115,17 @@ chrome.browserAction.onClicked.addListener(openWikaApp) ;
 
 chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
-      if (sender.tab && sender.tab.id==BACKGROUND.tab) {
-          switch (msg.type) {
-              case 'OpenApp': openWikaApp() ;
-              case 'AccountRes': receiveAccountRes(msg) ;
+      if (sender.tab) {
+          if (sender.tab.id==BACKGROUND.tab) {
+              // Messages from Wika App
+              switch (msg.type) {
+                case 'AccountRes': receiveAccountRes(msg) ;
+              }
+          } else {
+              // Messages from other tabs
+              switch (msg.type) {
+                  case 'OpenApp': openWikaApp() ;
+              }
           }
       }
   }
