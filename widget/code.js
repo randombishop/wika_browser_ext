@@ -5,7 +5,7 @@ const JS_CODE = `
     }
     
     function wikaLogoClicked() {
-            alert('wikaLogoClicked') ;
+        window.postMessage({type:'OpenApp'}, window.location.href);
     }
     
     function setUpDragButton() {

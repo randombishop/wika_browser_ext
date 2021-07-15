@@ -3,11 +3,11 @@
 
 let HTML_DIV1 = getHtmlDiv1() ;
 
-let HTML_DIV2 = getHtmlDiv2(46) ;
+let HTML_DIV2 = getHtmlDiv2() ;
 
 let HTML_DIV3 = getHtmlDiv3() ;
 
-let HTML_DIV4 = getHtmlDiv4(128.45) ;
+let HTML_DIV4 = getHtmlDiv4() ;
 
 let HTML_DIV5 = getHtmlDiv5() ;
 
@@ -59,10 +59,15 @@ document.head.appendChild(style);
 
 
 // Update Widget
-function updateWidgetWithAccountInfo(msg) {
+function updateWidgetWithAccountInfo(msg, sendResponse) {
+    sendResponse({type:'Ack'}) ;
     var element = document.getElementById("wika-widget-fixed-div") ;
     if (element) {
         element.style.visibility = msg.on?'visible':'hidden' ;
+        if (msg.on) {
+            var balance = msg.balance.wika.toFixed(2); ;
+            document.getElementById("wika-widget-balance-amount").innerText = balance ;
+        }
     }
 }
 
@@ -72,9 +77,20 @@ function updateWidgetWithAccountInfo(msg) {
 // Listen to messages from the extension background
 chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
-        if (msg.type=='AccountInfo') {
-            updateWidgetWithAccountInfo(msg) ;
-            sendResponse({type:'Ack'}) ;
+        switch (msg.type) {
+            case 'AccountInfo': updateWidgetWithAccountInfo(msg, sendResponse) ;
         }
     }
 );
+
+
+
+// Listen to messages from the current web page
+window.addEventListener("message", function (event) {
+    if (event.source!=window) return ;
+    var msg = event.data ;
+    switch (msg.type) {
+        case 'OpenApp': chrome.runtime.sendMessage(msg) ;
+    }
+}, false);
+
