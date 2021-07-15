@@ -65,7 +65,12 @@ function updateWidgetWithAccountInfo(msg, sendResponse) {
     if (element) {
         element.style.visibility = msg.on?'visible':'hidden' ;
         if (msg.on) {
-            var balance = msg.balance.wika.toFixed(2); ;
+            var balance = null ;
+            try {
+                balance = msg.balance.wika.toFixed(2);
+            } catch (e) {
+                balance = '-' ;
+            } ;
             document.getElementById("wika-widget-balance-amount").innerText = balance ;
         }
     }
@@ -94,3 +99,11 @@ window.addEventListener("message", function (event) {
     }
 }, false);
 
+
+
+// Add this URL to the list of tracked
+var msg = {
+    type: 'UrlReq',
+    url: window.location.href
+}
+chrome.runtime.sendMessage(msg) ;

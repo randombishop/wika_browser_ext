@@ -2,7 +2,8 @@ const BACKGROUND = {
     tab: null,
     account: null,
     balance: null,
-    on: false
+    on: false,
+    tabs:{}
 }
 
 const WIKA_APP_URL = "http://localhost:3000/"
@@ -104,7 +105,9 @@ function broadcastState() {
     }) ;
 }
 
-
+function registerNewTab(tabId, url) {
+    console.log(tabId + '->' + url) ;
+}
 
 
 
@@ -125,6 +128,7 @@ chrome.runtime.onMessage.addListener(
               // Messages from other tabs
               switch (msg.type) {
                   case 'OpenApp': openWikaApp() ;
+                  case 'UrlReq': registerNewTab(sender.tab.id, msg.url) ;
               }
           }
       }
