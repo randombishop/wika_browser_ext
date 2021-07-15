@@ -43,6 +43,16 @@
         "https://*.google.com/*"
       ],
       "all_frames": false
+    },
+    {
+      "js": [
+        "bridge/code.js",
+        "bridge/app.js"
+      ],
+      "matches": [
+        "http://localhost:3000/*"
+      ],
+      "all_frames": false
     }
   ]
 }

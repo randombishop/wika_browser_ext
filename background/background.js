@@ -1,58 +1,109 @@
 const BACKGROUND = {
+    tab: null,
+    account: null,
+    balance: null,
     on: false
 }
 
 const WIKA_APP_URL = "http://localhost:3000/"
 
 
-function selectWikaApp(tabId) {
-    chrome.tabs.update(tabId, {active: true, pinned: true}) ;
+function createWikaApp() {
+    chrome.tabs.create({url: WIKA_APP_URL}, (tab) => {
+        BACKGROUND.tab = tab.id ;
+    }) ;
+}
+
+function selectWikaApp() {
+    chrome.tabs.update(BACKGROUND.tab, {active: true}) ;
 }
 
 function openWikaApp() {
-    findWikaTab((tab) => {
-        if (tab) {
-            selectWikaApp(tab.id) ;
-        } else {
-            chrome.tabs.create({url: WIKA_APP_URL, pinned: true }) ;
-        }
-    }) ;
-}
-
-function findWikaTab(callback) {
-    chrome.tabs.query({url: WIKA_APP_URL+'*'}, (tabs) => {
-        if (tabs.length>0) {
-            callback(tabs[0]) ;
-        } else {
-            callback(null) ;
-        }
-    }) ;
-}
-
-function checkWikaApp() {
-    if (BACKGROUND.wikaTabId!=null) {
-        pingWikaApp() ;
-    } else {
-        findWikaTab((tab) => {
-            if (tab) {
-                BACKGROUND.wikaTabId = tab.id ;
-                pingWikaApp() ;
+    if (BACKGROUND.tab) {
+        pingTab((pong) => {
+            if (pong) {
+                selectWikaApp() ;
             } else {
-                BACKGROUND.on = false ;
-                chrome.browserAction.setBadgeBackgroundColor({color:'red'}) ;
-                chrome.browserAction.setBadgeText({text:'OFF'}) ;
+                createWikaApp() ;
             }
-        }) ;
+        })
+    } else {
+        createWikaApp() ;
     }
 }
 
-function pingWikaApp() {
-    alert('pingWikaApp') ;
+function setBadge(color, text) {
+    chrome.browserAction.setBadgeBackgroundColor({color:color}) ;
+    chrome.browserAction.setBadgeText({text:text}) ;
 }
+
+function setBadgeOn(on) {
+    if (on) {
+        setBadge('green', 'On') ;
+    } else {
+        setBadge('red', 'Off') ;
+    }
+}
+
+function setOn(on) {
+    BACKGROUND.on = on ;
+    setBadgeOn(on) ;
+}
+
+function pingTab(callback) {
+    chrome.tabs.sendMessage(BACKGROUND.tab, "ping", function(response) {
+        if (!window.chrome.runtime.lastError) {
+            callback(response=="pong") ;
+        } else {
+            callback(false) ;
+        }
+    });
+}
+
+function checkWikaApp() {
+    if (BACKGROUND.tab) {
+        pingTab((pong) => {
+            if (pong) {
+                getAccount() ;
+            } else {
+                setOn(false) ;
+            }
+        })
+    } else {
+        setOn(false) ;
+    }
+}
+
+function getAccount(callback) {
+    chrome.tabs.sendMessage(BACKGROUND.tab, {action: "getAccount"});
+}
+
+function getAccountResponse(msg) {
+    BACKGROUND.account = msg.account ;
+    BACKGROUND.balance = msg.balance ;
+    setOn(msg.account!=null) ;
+}
+
+
+
+
+
+
 
 
 chrome.browserAction.onClicked.addListener(openWikaApp) ;
 
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+      if (sender.tab && sender.tab.id==BACKGROUND.tab) {
+          switch (request.response) {
+              case 'getAccount': getAccountResponse(request) ;
+          }
+      }
+  }
+);
+
+setInterval(checkWikaApp, 1000);
 
 
-pingWikaApp() ;
+
