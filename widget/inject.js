@@ -62,7 +62,6 @@ document.head.appendChild(style);
 function updateWidgetWithAccountInfo(msg) {
     var element = document.getElementById("wika-widget-fixed-div") ;
     if (element) {
-        element.style.visibility = msg.on?'visible':'hidden' ;
         if (msg.on) {
             var balance = null ;
             try {
@@ -71,6 +70,9 @@ function updateWidgetWithAccountInfo(msg) {
                 balance = '-' ;
             } ;
             document.getElementById("wika-widget-balance-amount").innerText = balance ;
+            showElement("wika-widget-fixed-div", "flex") ;
+        } else {
+            hideElement("wika-widget-fixed-div") ;
         }
     }
 }
