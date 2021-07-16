@@ -175,6 +175,14 @@ function receiveLikeRes(msg) {
     }) ;
 }
 
+function sendMessageToTab(msg, tab) {
+    console.debug('outgoing', tab, msg) ;
+    chrome.tabs.sendMessage(tab, msg) ;
+}
+
+
+
+
 
 
 
@@ -184,14 +192,14 @@ chrome.runtime.onMessage.addListener(
   function(msg, sender, sendResponse) {
       if (sender.tab) {
           if (sender.tab.id==BACKGROUND.tab) {
-              // Messages from Wika App
+              console.debug('incoming from app', msg) ;
               switch (msg.type) {
                 case 'AccountRes': receiveAccountRes(msg); break;
                 case 'UrlRes': receiveUrlRes(msg); break;
                 case 'LikeRes': receiveLikeRes(msg); break;
               }
           } else {
-              // Messages from other tabs
+              console.debug('incoming from page', msg) ;
               switch (msg.type) {
                   case 'OpenApp': openWikaApp(); break;
                   case 'NewTab': registerNewTab(sender.tab.id, msg.url); break;

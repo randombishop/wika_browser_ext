@@ -4,7 +4,9 @@
   "version": "1.0",
   "manifest_version": 2,
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "tabs",
+    "https://app.wika.network/*"
   ],
   "background": {
     "scripts": [

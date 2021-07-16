@@ -1,8 +1,7 @@
 const JS_CODE = `
 
     function currentOrigin() {
-        var origin = window.location.protocol + '//' + window.location.domain + '/*' ;
-        console.log('widget.js/origin', origin) ;
+        return window.location.protocol + '//' + window.location.hostname + '/*' ;
     }
     
     function initializeWikaWidget() {

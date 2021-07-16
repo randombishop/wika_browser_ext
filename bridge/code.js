@@ -1,8 +1,7 @@
 const JS_CODE = `
 
     function currentOrigin() {
-        let origin = window.location.protocol + '//' + window.location.domain + '/*' ;
-        console.log('code.js/origin', origin) ;
+        return window.location.protocol + '//' + window.location.hostname + '/*' ;
     }
     
     function postMessageToBridge(msg) {

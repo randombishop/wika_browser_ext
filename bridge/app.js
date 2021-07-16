@@ -1,6 +1,5 @@
 function currentOrigin() {
-    let origin = window.location.protocol + '//' + window.location.domain + '/*' ;
-    console.log('app.js/origin', origin) ;
+    return window.location.protocol + '//' + window.location.hostname + '/*' ;
 }
 
 function forwardMessageToWindow(msg) {
