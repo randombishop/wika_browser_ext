@@ -146,6 +146,15 @@ function findById(id, array) {
     return null ;
 }
 
+function receiveUrlRes(msg) {
+    console.log('receiveUrlRes') ;
+    console.log(JSON.stringify(msg)) ;
+}
+
+
+
+
+
 
 chrome.browserAction.onClicked.addListener(openWikaApp) ;
 
@@ -156,6 +165,7 @@ chrome.runtime.onMessage.addListener(
               // Messages from Wika App
               switch (msg.type) {
                 case 'AccountRes': receiveAccountRes(msg); break;
+                case 'UrlRes': receiveUrlRes(msg); break;
               }
           } else {
               // Messages from other tabs

@@ -11,7 +11,17 @@ const JS_CODE = `
     }
     
     function processUrlReq(tab, url) {
-        console.log('processUrlReq '+tab+' -> '+url) ;
+        try {
+            var address = window.wikaReactApp.state.account.address ;
+            var network = window.wikaReactApp.wikaNetwork ;
+            network.getUrlInfo(address, url, (msg) => {
+                msg.type = "UrlRes" ;
+                msg.tab = tab ;
+                msg.url = url ;
+                window.postMessage(msg, "http://localhost:3000/*");
+            }) ;
+        } catch (err) {
+        }
     }
     
     window.addEventListener("message", function (event) {

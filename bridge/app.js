@@ -1,8 +1,11 @@
 
 
-function forwardMessage(msg, sendResponse) {
+function forwardMessageToWindow(msg) {
     window.postMessage(msg, "http://localhost:3000/*");
-    sendResponse({type:'Forwarded'}) ;
+}
+
+function forwardMessageToExt(msg) {
+    chrome.runtime.sendMessage(msg);
 }
 
 
@@ -12,8 +15,8 @@ chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
         switch (msg.type) {
             case 'Ping': sendResponse({type:'Pong'}); break;
-            case 'AccountReq': forwardMessage(msg, sendResponse); break;
-            case 'UrlReq': forwardMessage(msg, sendResponse); break;
+            case 'AccountReq': forwardMessageToWindow(msg); break;
+            case 'UrlReq': forwardMessageToWindow(msg); break;
         }
     }
 );
@@ -24,7 +27,8 @@ window.addEventListener("message", function (event) {
     if (event.source!=window) return ;
     var msg = event.data ;
     switch (msg.type) {
-        case 'AccountRes': chrome.runtime.sendMessage(msg); break;
+        case 'AccountRes': forwardMessageToExt(msg); break;
+        case 'UrlRes': forwardMessageToExt(msg); break;
     }
 }, false);
 
