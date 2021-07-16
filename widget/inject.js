@@ -83,7 +83,7 @@ function updateWidgetWithUrlInfo(msg) {
         var htmlMyLikes = "" ;
         if (msg.likesSubmittedCount > 0) {
             document.getElementById("wika-widget-div-already-liked-num-likes").innerText = msg.likesSubmittedCount ;
-            document.getElementById("wika-widget-div-already-liked-rank").innerText = msg.likesSubmittedAt ;
+            document.getElementById("wika-widget-div-already-liked-rank").innerText = (msg.likesSubmittedAt+1) ;
             hideElement('wika-widget-div-new-like') ;
             showElement('wika-widget-div-already-liked', 'block') ;
         } else {
@@ -95,7 +95,10 @@ function updateWidgetWithUrlInfo(msg) {
 }
 
 function updateWidgetWithLikeInfo(msg) {
-    console.log('updateWidgetWithLikeInfo', msg) ;
+    var element = document.getElementById("wika-widget-fixed-div") ;
+    if (element) {
+        document.getElementById("wika-widget-like-button-text").innerText = msg.status ;
+    }
 }
 
 function hideElement(id) {

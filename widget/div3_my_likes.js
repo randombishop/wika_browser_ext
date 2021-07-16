@@ -29,7 +29,7 @@ const HTML_DIV3_MY_LIKES = `
                                font-size: 16px;
                                background: darkgray;
                                color: white;">
-                    <span class="wika-widget-like-button-text">Send <span id="wika-widget-like-button-value">1</span> &#128077;</span>
+                    <span id="wika-widget-like-button-text">Send <span id="wika-widget-like-button-value">1</span> &#128077;</span>
                 </button>
             </div>                
         </div>
@@ -51,6 +51,9 @@ const HTML_DIV3_MY_LIKES = `
 `;
 
 
+HTML_DIV3_LIKE_BUTTON_TEXT = `
+    Send <span id="wika-widget-like-button-value">1</span> &#128077;
+` ;
 
 
 

@@ -40,7 +40,7 @@ const JS_CODE = `
                 postMessageToBridge(msg) ;
             }) ;
         } catch (err) {
-            console.log(err) ;
+            postMessageToBridge({type: 'LikeRes', status: 'Error', err: err}) ; ;
         }
     }
     

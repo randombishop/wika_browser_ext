@@ -14,6 +14,7 @@ const JS_CODE = `
     }
      
     function likeButtonClicked() {
+        document.getElementById("wika-widget-like-button").disabled = true ;
         var numLikes = Number(document.getElementById("wika-widget-like-slider").value) ;
         var msg = {
             type:'NewLike',

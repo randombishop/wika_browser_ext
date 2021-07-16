@@ -17,7 +17,7 @@ const CSS_WIDGET = `
       cursor: pointer;
     }
     
-    #wika-widget-like-button:hover .wika-widget-like-button-text{
+    #wika-widget-like-button:hover #wika-widget-like-button-text{
       font-weight: bold;
     }
     
