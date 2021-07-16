@@ -6,7 +6,7 @@ const BACKGROUND = {
     tabs:{}
 }
 
-const WIKA_APP_URL = "http://localhost:3000/"
+const WIKA_APP_URL = "https://app.wika.network/"
 
 
 function createWikaApp() {

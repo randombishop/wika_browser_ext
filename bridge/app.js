@@ -1,7 +1,7 @@
 
 
 function forwardMessageToWindow(msg) {
-    window.postMessage(msg, "http://localhost:3000/*");
+    window.postMessage(msg, window.location.href) ;
 }
 
 function forwardMessageToExt(msg) {
