@@ -59,8 +59,7 @@ document.head.appendChild(style);
 
 
 // Update Widget
-function updateWidgetWithAccountInfo(msg, sendResponse) {
-    sendResponse({type:'Ack'}) ;
+function updateWidgetWithAccountInfo(msg) {
     var element = document.getElementById("wika-widget-fixed-div") ;
     if (element) {
         element.style.visibility = msg.on?'visible':'hidden' ;
@@ -76,6 +75,10 @@ function updateWidgetWithAccountInfo(msg, sendResponse) {
     }
 }
 
+function updateWidgetWithUrlInfo(msg) {
+    console.log(msg) ;
+}
+
 
 
 
@@ -83,7 +86,8 @@ function updateWidgetWithAccountInfo(msg, sendResponse) {
 chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
         switch (msg.type) {
-            case 'AccountInfo': updateWidgetWithAccountInfo(msg, sendResponse); break;
+            case 'AccountInfo': updateWidgetWithAccountInfo(msg); break;
+            case 'UrlInfo': updateWidgetWithUrlInfo(msg); break;
         }
     }
 );

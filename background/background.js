@@ -147,8 +147,14 @@ function findById(id, array) {
 }
 
 function receiveUrlRes(msg) {
-    console.log('receiveUrlRes') ;
-    console.log(JSON.stringify(msg)) ;
+    msg.tab = Number(msg.tab) ;
+    chrome.tabs.query({url: msg.url}, (tabs) => {
+        var tab = findById(msg.tab, tabs);
+        if (tab) {
+            msg.type = "UrlInfo" ;
+            chrome.tabs.sendMessage(msg.tab, msg);
+        }
+    }) ;
 }
 
 
