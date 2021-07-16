@@ -1,11 +1,16 @@
 const JS_CODE = `
 
+    function currentOrigin() {
+        var origin = window.location.protocol + '//' + window.location.domain + '/*' ;
+        console.log('widget.js/origin', origin) ;
+    }
+    
     function initializeWikaWidget() {
         setUpDragButton() ;
     }
     
     function wikaLogoClicked() {
-        window.postMessage({type:'OpenApp'}, window.location.href);
+        window.postMessage({type:'OpenApp'}, currentOrigin());
     }
     
     function likeSliderChanged(event) {
@@ -21,7 +26,7 @@ const JS_CODE = `
             url: window.location.href,
             numLikes: numLikes
         } ;
-        window.postMessage(msg, window.location.href);
+        window.postMessage(msg, currentOrigin());
     }
        
     function setUpDragButton() {

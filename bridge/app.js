@@ -1,7 +1,10 @@
-
+function currentOrigin() {
+    let origin = window.location.protocol + '//' + window.location.domain + '/*' ;
+    console.log('app.js/origin', origin) ;
+}
 
 function forwardMessageToWindow(msg) {
-    window.postMessage(msg, window.location.href) ;
+    window.postMessage(msg, currentOrigin()) ;
 }
 
 function forwardMessageToExt(msg) {

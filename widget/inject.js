@@ -151,3 +151,6 @@ var msg = {
     url: window.location.href
 }
 chrome.runtime.sendMessage(msg) ;
+
+
+// TODO: Should do something when the tab navigates to a new URL...

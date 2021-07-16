@@ -1,7 +1,12 @@
 const JS_CODE = `
 
+    function currentOrigin() {
+        let origin = window.location.protocol + '//' + window.location.domain + '/*' ;
+        console.log('code.js/origin', origin) ;
+    }
+    
     function postMessageToBridge(msg) {
-        window.postMessage(msg, window.location.href);
+        window.postMessage(msg, currentOrigin());
     }
 
     function sendAccountResponse() {
