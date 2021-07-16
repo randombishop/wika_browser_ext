@@ -123,13 +123,12 @@ function trackUrls() {
         if (!window.chrome.runtime.lastError) {
             var tab = findById(id, tabs);
             if (tab != null) {
-                console.log(id + '/' + url + ' > FOUND');
+                sendUrlReq(id, url) ;
             } else {
-                console.log(id + '/' + url + ' > NOT FOUND');
+                delete BACKGROUND.tabs[id] ;
             }
         }
     }
-    console.log('trackUrls') ;
     if (BACKGROUND.tab) {
         for (var tabId in BACKGROUND.tabs) {
             var url = BACKGROUND.tabs[tabId] ;
