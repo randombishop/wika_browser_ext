@@ -8,6 +8,16 @@ const JS_CODE = `
         window.postMessage({type:'OpenApp'}, window.location.href);
     }
     
+    function likeSliderChanged(event) {
+        let n = event.target.value ;
+        document.getElementById("wika-widget-like-button-value").innerText = n ;
+    }
+     
+    function likeButtonClicked() {
+        let numLikes = Number(document.getElementById("wika-widget-like-slider").value) ;
+        alert('likeButtonClicked:'+numLikes) ;
+    }
+       
     function setUpDragButton() {
         var widget = document.getElementById("wika-widget-fixed-div") ;
         var button = document.getElementById("wika-widget-move-button") ;

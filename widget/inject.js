@@ -76,20 +76,33 @@ function updateWidgetWithAccountInfo(msg) {
 }
 
 function updateWidgetWithUrlInfo(msg) {
-    console.log(msg) ;
     var element = document.getElementById("wika-widget-fixed-div") ;
     if (element) {
         var htmlMyLikes = "" ;
         if (msg.likesSubmittedCount > 0) {
-            htmlMyLikes = getHtmlAlreadyLiked(msg.likesSubmittedCount,msg.likesSubmittedAt) ;
+            document.getElementById("wika-widget-div-already-liked-num-likes").innerText = msg.likesSubmittedCount ;
+            document.getElementById("wika-widget-div-already-liked-rank").innerText = msg.likesSubmittedAt ;
+            hideElement('wika-widget-div-new-like') ;
+            showElement('wika-widget-div-already-liked', 'block') ;
         } else {
-            htmlMyLikes = getHtmlSendLike() ;
+            hideElement('wika-widget-div-already-liked') ;
+            showElement('wika-widget-div-new-like', 'flex') ;
         }
         document.getElementById("wika-widget-page-num-likes").innerText = msg.urlLikes ;
-        document.getElementById("wika-widget-div-my-likes").innerHTML = htmlMyLikes ;
     }
 }
 
+function hideElement(id) {
+    var e = document.getElementById(id) ;
+    e.style.display = 'none' ;
+    e.style.visibility = 'hidden' ;
+}
+
+function showElement(id, display) {
+    var e = document.getElementById(id) ;
+    e.style.display = display ;
+    e.style.visibility = 'visible' ;
+}
 
 
 
