@@ -77,6 +77,17 @@ function updateWidgetWithAccountInfo(msg) {
 
 function updateWidgetWithUrlInfo(msg) {
     console.log(msg) ;
+    var element = document.getElementById("wika-widget-fixed-div") ;
+    if (element) {
+        var htmlMyLikes = "" ;
+        if (msg.likesSubmittedCount > 0) {
+            htmlMyLikes = getHtmlAlreadyLiked(msg.likesSubmittedCount,msg.likesSubmittedAt) ;
+        } else {
+            htmlMyLikes = getHtmlSendLike() ;
+        }
+        document.getElementById("wika-widget-page-num-likes").innerText = msg.urlLikes ;
+        document.getElementById("wika-widget-div-my-likes").innerHTML = htmlMyLikes ;
+    }
 }
 
 
