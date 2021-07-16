@@ -10,12 +10,15 @@ const JS_CODE = `
         window.postMessage(msg, "http://localhost:3000/*");
     }
     
+    function processUrlReq(tab, url) {
+        console.log('processUrlReq '+tab+' -> '+url) ;
+    }
+    
     window.addEventListener("message", function (event) {
         var data = event.data ;
-        if (data.type) {
-            switch (data.type) {
-                case 'AccountReq': sendAccountResponse();
-            }
+        switch (data.type) {
+            case 'AccountReq': sendAccountResponse(); break;
+            case 'UrlReq': processUrlReq(data.tab, data.url); break;
         }
     }, false);
     

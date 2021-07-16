@@ -79,7 +79,8 @@ function checkWikaApp() {
 }
 
 function sendAccountReq(callback) {
-    chrome.tabs.sendMessage(BACKGROUND.tab, {type: "AccountReq"});
+    var msg = {type: "AccountReq"} ;
+    chrome.tabs.sendMessage(BACKGROUND.tab, msg);
 }
 
 function receiveAccountRes(msg) {
@@ -106,12 +107,45 @@ function broadcastState() {
 }
 
 function registerNewTab(tabId, url) {
-    console.log(tabId + '->' + url) ;
+    BACKGROUND.tabs[tabId] = url ;
+    sendUrlReq(tabId, url) ;
 }
 
+function sendUrlReq(tabId, url) {
+    if (BACKGROUND.tab) {
+        var msg = {type: "UrlReq", tab: tabId, url: url};
+        chrome.tabs.sendMessage(BACKGROUND.tab, msg);
+    }
+}
 
+function trackUrls() {
+    queryCallback = (id, url) => (tabs) => {
+        if (!window.chrome.runtime.lastError) {
+            var tab = findById(id, tabs);
+            if (tab != null) {
+                console.log(id + '/' + url + ' > FOUND');
+            } else {
+                console.log(id + '/' + url + ' > NOT FOUND');
+            }
+        }
+    }
+    console.log('trackUrls') ;
+    if (BACKGROUND.tab) {
+        for (var tabId in BACKGROUND.tabs) {
+            var url = BACKGROUND.tabs[tabId] ;
+            chrome.tabs.query({url: url}, queryCallback(tabId, url)) ;
+        }
+    }
+}
 
-
+function findById(id, array) {
+    for (var i in array) {
+        if (array[i].id==id) {
+            return array[i];
+        }
+    }
+    return null ;
+}
 
 
 chrome.browserAction.onClicked.addListener(openWikaApp) ;
@@ -122,13 +156,13 @@ chrome.runtime.onMessage.addListener(
           if (sender.tab.id==BACKGROUND.tab) {
               // Messages from Wika App
               switch (msg.type) {
-                case 'AccountRes': receiveAccountRes(msg) ;
+                case 'AccountRes': receiveAccountRes(msg); break;
               }
           } else {
               // Messages from other tabs
               switch (msg.type) {
-                  case 'OpenApp': openWikaApp() ;
-                  case 'UrlReq': registerNewTab(sender.tab.id, msg.url) ;
+                  case 'OpenApp': openWikaApp(); break;
+                  case 'NewTab': registerNewTab(sender.tab.id, msg.url); break;
               }
           }
       }
@@ -136,6 +170,8 @@ chrome.runtime.onMessage.addListener(
 );
 
 setInterval(checkWikaApp, 1000);
+
+setInterval(trackUrls, 10000);
 
 
 

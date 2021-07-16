@@ -83,7 +83,7 @@ function updateWidgetWithAccountInfo(msg, sendResponse) {
 chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
         switch (msg.type) {
-            case 'AccountInfo': updateWidgetWithAccountInfo(msg, sendResponse) ;
+            case 'AccountInfo': updateWidgetWithAccountInfo(msg, sendResponse); break;
         }
     }
 );
@@ -95,7 +95,7 @@ window.addEventListener("message", function (event) {
     if (event.source!=window) return ;
     var msg = event.data ;
     switch (msg.type) {
-        case 'OpenApp': chrome.runtime.sendMessage(msg) ;
+        case 'OpenApp': chrome.runtime.sendMessage(msg);  break;
     }
 }, false);
 
@@ -103,7 +103,7 @@ window.addEventListener("message", function (event) {
 
 // Add this URL to the list of tracked
 var msg = {
-    type: 'UrlReq',
+    type: 'NewTab',
     url: window.location.href
 }
 chrome.runtime.sendMessage(msg) ;
