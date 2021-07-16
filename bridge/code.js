@@ -1,5 +1,9 @@
 const JS_CODE = `
 
+    function postMessageToBridge(msg) {
+        window.postMessage(msg, "http://localhost:3000/*");
+    }
+
     function sendAccountResponse() {
         var state = window.wikaReactApp.state ;
         var msg = {
@@ -7,7 +11,7 @@ const JS_CODE = `
             account: state.account,
             balance: state.balance
         }
-        window.postMessage(msg, "http://localhost:3000/*");
+        postMessageToBridge(msg) ;
     }
     
     function processUrlReq(tab, url) {
@@ -18,9 +22,25 @@ const JS_CODE = `
                 msg.type = "UrlRes" ;
                 msg.tab = tab ;
                 msg.url = url ;
-                window.postMessage(msg, "http://localhost:3000/*");
+                postMessageToBridge(msg) ;
             }) ;
         } catch (err) {
+        }
+    }
+    
+    function processLikeReq(tab, url, urlRef, numLikes) {
+        try {
+            var source = window.wikaReactApp.state.account.source ;
+            var address = window.wikaReactApp.state.account.address ;
+            var network = window.wikaReactApp.wikaNetwork ;
+            network.txLikeExt(source, address, url, urlRef, numLikes, (msg) => {
+                msg.type = 'LikeRes' ;
+                msg.tab = tab ;
+                msg.url = url ;
+                postMessageToBridge(msg) ;
+            }) ;
+        } catch (err) {
+            console.log(err) ;
         }
     }
     
@@ -29,6 +49,7 @@ const JS_CODE = `
         switch (data.type) {
             case 'AccountReq': sendAccountResponse(); break;
             case 'UrlReq': processUrlReq(data.tab, data.url); break;
+            case 'LikeReq': processLikeReq(data.tab, data.url, "", data.numLikes); break;
         }
     }, false);
     

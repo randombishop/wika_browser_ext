@@ -157,7 +157,23 @@ function receiveUrlRes(msg) {
     }) ;
 }
 
+function submitNewLike(tabId, url, numLikes) {
+    if (BACKGROUND.tab) {
+        var msg = {type: "LikeReq", tab: tabId, url: url, numLikes: numLikes} ;
+        chrome.tabs.sendMessage(BACKGROUND.tab, msg);
+    }
+}
 
+function receiveLikeRes(msg) {
+    msg.tab = Number(msg.tab) ;
+    chrome.tabs.query({url: msg.url}, (tabs) => {
+        var tab = findById(msg.tab, tabs);
+        if (tab) {
+            msg.type = "LikeInfo" ;
+            chrome.tabs.sendMessage(msg.tab, msg);
+        }
+    }) ;
+}
 
 
 
@@ -172,12 +188,14 @@ chrome.runtime.onMessage.addListener(
               switch (msg.type) {
                 case 'AccountRes': receiveAccountRes(msg); break;
                 case 'UrlRes': receiveUrlRes(msg); break;
+                case 'LikeRes': receiveLikeRes(msg); break;
               }
           } else {
               // Messages from other tabs
               switch (msg.type) {
                   case 'OpenApp': openWikaApp(); break;
                   case 'NewTab': registerNewTab(sender.tab.id, msg.url); break;
+                  case 'NewLike': submitNewLike(sender.tab.id, msg.url, msg.numLikes); break;
               }
           }
       }

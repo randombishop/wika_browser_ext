@@ -94,6 +94,10 @@ function updateWidgetWithUrlInfo(msg) {
     }
 }
 
+function updateWidgetWithLikeInfo(msg) {
+    console.log('updateWidgetWithLikeInfo', msg) ;
+}
+
 function hideElement(id) {
     var e = document.getElementById(id) ;
     e.style.display = 'none' ;
@@ -108,12 +112,18 @@ function showElement(id, display) {
 
 
 
+
+
+
+
+
 // Listen to messages from the extension background
 chrome.runtime.onMessage.addListener(
     function (msg, sender, sendResponse) {
         switch (msg.type) {
             case 'AccountInfo': updateWidgetWithAccountInfo(msg); break;
             case 'UrlInfo': updateWidgetWithUrlInfo(msg); break;
+            case 'LikeInfo': updateWidgetWithLikeInfo(msg); break;
         }
     }
 );
@@ -126,6 +136,7 @@ window.addEventListener("message", function (event) {
     var msg = event.data ;
     switch (msg.type) {
         case 'OpenApp': chrome.runtime.sendMessage(msg);  break;
+        case 'NewLike': chrome.runtime.sendMessage(msg);  break;
     }
 }, false);
 

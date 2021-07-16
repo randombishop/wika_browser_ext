@@ -9,13 +9,18 @@ const JS_CODE = `
     }
     
     function likeSliderChanged(event) {
-        let n = event.target.value ;
+        var n = event.target.value ;
         document.getElementById("wika-widget-like-button-value").innerText = n ;
     }
      
     function likeButtonClicked() {
-        let numLikes = Number(document.getElementById("wika-widget-like-slider").value) ;
-        alert('likeButtonClicked:'+numLikes) ;
+        var numLikes = Number(document.getElementById("wika-widget-like-slider").value) ;
+        var msg = {
+            type:'NewLike',
+            url: window.location.href,
+            numLikes: numLikes
+        } ;
+        window.postMessage(msg, window.location.href);
     }
        
     function setUpDragButton() {

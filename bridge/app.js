@@ -17,6 +17,7 @@ chrome.runtime.onMessage.addListener(
             case 'Ping': sendResponse({type:'Pong'}); break;
             case 'AccountReq': forwardMessageToWindow(msg); break;
             case 'UrlReq': forwardMessageToWindow(msg); break;
+            case 'LikeReq': forwardMessageToWindow(msg); break;
         }
     }
 );
@@ -29,6 +30,7 @@ window.addEventListener("message", function (event) {
     switch (msg.type) {
         case 'AccountRes': forwardMessageToExt(msg); break;
         case 'UrlRes': forwardMessageToExt(msg); break;
+        case 'LikeRes': forwardMessageToExt(msg); break;
     }
 }, false);
 
