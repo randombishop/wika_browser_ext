@@ -3,18 +3,19 @@
   "description": "Official Google Chrome plug-in to interact with Wika Network blockchain",
   "version": "1.0",
   "manifest_version": 2,
-  "permissions": ["storage","activeTab"],
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "https://app.wika.network/*"
+  ],
   "background": {
-      "scripts": [
-        "/libs/polkadot/api.js",
-        "/background/network.js",
-        "/background/background.js"
-      ],
-      "persistent": true
-    },
+    "scripts": [
+      "/background/background.js"
+    ],
+    "persistent": true
+  },
   "browser_action": {
-    "default_title": "Wika Network",
-    "default_popup": "popup.html"
+    "default_title": "Wika Network"
   },
   "icons": {
     "16": "/images/logo16.png",
@@ -22,5 +23,37 @@
     "48": "/images/logo48.png",
     "128": "/images/logo128.png"
   },
-  "content_security_policy": "script-src 'self' blob: 'unsafe-eval' 'wasm-eval'; object-src 'self'"
+  "content_scripts": [
+    {
+      "js": [
+        "widget/code.js",
+        "widget/div1_logo.js",
+        "widget/div2_page_likes.js",
+        "widget/div3_my_likes.js",
+        "widget/div4_balance.js",
+        "widget/div5_move.js",
+        "widget/css.js",
+        "widget/inject.js"
+      ],
+      "matches": [
+        "*://*/*"
+      ],
+      "exclude_matches": [
+        "https://app.wika.network/*",
+        "https://app.slack.com/*",
+        "https://*.google.com/*"
+      ],
+      "all_frames": false
+    },
+    {
+      "js": [
+        "bridge/code.js",
+        "bridge/app.js"
+      ],
+      "matches": [
+        "https://app.wika.network/*"
+      ],
+      "all_frames": false
+    }
+  ]
 }

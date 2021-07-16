@@ -1,60 +1,218 @@
-
 const BACKGROUND = {
-    cryptoReady: false,
-    network: null
+    tab: null,
+    account: null,
+    balance: null,
+    on: false,
+    tabs:{}
 }
 
-function bytesToHex(byteArray) {
-    var s = '0x';
-    byteArray.forEach(function (byte) {
-        s += ('0' + (byte & 0xFF).toString(16)).slice(-2);
+const WIKA_APP_URL = "https://app.wika.network/"
+
+
+function createWikaApp() {
+    chrome.tabs.create({url: WIKA_APP_URL}, (tab) => {
+        BACKGROUND.tab = tab.id ;
+    }) ;
+}
+
+function selectWikaApp() {
+    chrome.tabs.update(BACKGROUND.tab, {active: true}) ;
+}
+
+function openWikaApp() {
+    if (BACKGROUND.tab) {
+        pingTab((pong) => {
+            if (pong) {
+                selectWikaApp() ;
+            } else {
+                createWikaApp() ;
+            }
+        })
+    } else {
+        createWikaApp() ;
+    }
+}
+
+function setBadge(color, text) {
+    chrome.browserAction.setBadgeBackgroundColor({color:color}) ;
+    chrome.browserAction.setBadgeText({text:text}) ;
+}
+
+function setBadgeOn(on) {
+    if (on) {
+        setBadge('green', 'On') ;
+    } else {
+        setBadge('red', 'Off') ;
+    }
+}
+
+function setOn(on) {
+    BACKGROUND.on = on ;
+    setBadgeOn(on) ;
+    // TODO: this should only happen if there's a change in state to avoid wasting messages
+    broadcastState() ;
+}
+
+function pingTab(callback) {
+    var msg = {type:"Ping"} ;
+    chrome.tabs.sendMessage(BACKGROUND.tab, msg, function(response) {
+        if (!window.chrome.runtime.lastError) {
+            callback(response.type=="Pong") ;
+        } else {
+            callback(false) ;
+        }
     });
-    return s;
 }
 
-window.loadCrypto = (callback) => {
-    if (BACKGROUND.cryptoReady) {
-        callback() ;
+function checkWikaApp() {
+    if (BACKGROUND.tab) {
+        pingTab((pong) => {
+            if (pong) {
+                sendAccountReq() ;
+            } else {
+                setOn(false) ;
+            }
+        })
     } else {
-        polkadot_crypto.cryptoWaitReady().then(() => {
-            BACKGROUND.cryptoReady = true ;
-            callback() ;
-        }) ;
+        setOn(false) ;
     }
 }
 
-window.connectNetwork = (callback) => {
-    if (BACKGROUND.network) {
-        callback(BACKGROUND.network) ;
-    } else {
-        let network = new WikaNetwork() ;
-        network.connect(() => {
-            BACKGROUND.network = network ;
-            callback(BACKGROUND.network) ;
-        }) ;
+function sendAccountReq(callback) {
+    var msg = {type: "AccountReq"} ;
+    chrome.tabs.sendMessage(BACKGROUND.tab, msg);
+}
+
+function receiveAccountRes(msg) {
+    BACKGROUND.account = msg.account ;
+    BACKGROUND.balance = msg.balance ;
+    setOn(msg.account!=null) ;
+}
+
+function broadcastState() {
+    var msg = {
+        type: 'AccountInfo',
+        account: BACKGROUND.account,
+        balance: BACKGROUND.balance,
+        on: BACKGROUND.on
+    }
+    chrome.tabs.query({currentWindow:true}, (tabs) => {
+        if (!window.chrome.runtime.lastError) {
+            for (var i in tabs) {
+                var tabId = tabs[i].id ;
+                chrome.tabs.sendMessage(tabId, msg);
+            }
+        }
+    }) ;
+}
+
+function registerNewTab(tabId, url) {
+    BACKGROUND.tabs[tabId] = url ;
+    sendUrlReq(tabId, url) ;
+}
+
+function sendUrlReq(tabId, url) {
+    if (BACKGROUND.tab) {
+        var msg = {type: "UrlReq", tab: tabId, url: url};
+        chrome.tabs.sendMessage(BACKGROUND.tab, msg);
     }
 }
 
-window.closeNetwork = (callback) => {
-    if (!BACKGROUND.network) {
-        callback() ;
-    } else {
-        BACKGROUND.network.disconnect(callback) ;
+function trackUrls() {
+    queryCallback = (id, url) => (tabs) => {
+        if (!window.chrome.runtime.lastError) {
+            var tab = findById(id, tabs);
+            if (tab != null) {
+                sendUrlReq(id, url) ;
+            } else {
+                delete BACKGROUND.tabs[id] ;
+            }
+        }
+    }
+    if (BACKGROUND.tab) {
+        for (var tabId in BACKGROUND.tabs) {
+            var url = BACKGROUND.tabs[tabId] ;
+            chrome.tabs.query({url: url}, queryCallback(tabId, url)) ;
+        }
     }
 }
 
-window.importAccount = (phrase) => {
-    let keyring = new window.polkadot_api.Keyring({ type: 'sr25519' });
-    let newPair = keyring.addFromUri(phrase) ;
-    let account = {
-        address: newPair.address,
-        addressRaw: bytesToHex(newPair.addressRaw),
-        phrase: phrase
-    } ;
-    return account ;
+function findById(id, array) {
+    for (var i in array) {
+        if (array[i].id==id) {
+            return array[i];
+        }
+    }
+    return null ;
 }
 
-window.generateNewAccount = () => {
-    let phrase = polkadot_crypto.mnemonicGenerate(12);
-    return window.importAccount(phrase) ;
+function receiveUrlRes(msg) {
+    msg.tab = Number(msg.tab) ;
+    chrome.tabs.query({url: msg.url}, (tabs) => {
+        var tab = findById(msg.tab, tabs);
+        if (tab) {
+            msg.type = "UrlInfo" ;
+            chrome.tabs.sendMessage(msg.tab, msg);
+        }
+    }) ;
 }
+
+function submitNewLike(tabId, url, numLikes) {
+    if (BACKGROUND.tab) {
+        var msg = {type: "LikeReq", tab: tabId, url: url, numLikes: numLikes} ;
+        chrome.tabs.sendMessage(BACKGROUND.tab, msg);
+    }
+}
+
+function receiveLikeRes(msg) {
+    msg.tab = Number(msg.tab) ;
+    chrome.tabs.query({url: msg.url}, (tabs) => {
+        var tab = findById(msg.tab, tabs);
+        if (tab) {
+            msg.type = "LikeInfo" ;
+            chrome.tabs.sendMessage(msg.tab, msg);
+        }
+    }) ;
+}
+
+function sendMessageToTab(msg, tab) {
+    console.debug('outgoing', tab, msg) ;
+    chrome.tabs.sendMessage(tab, msg) ;
+}
+
+
+
+
+
+
+
+chrome.browserAction.onClicked.addListener(openWikaApp) ;
+
+chrome.runtime.onMessage.addListener(
+  function(msg, sender, sendResponse) {
+      if (sender.tab) {
+          if (sender.tab.id==BACKGROUND.tab) {
+              console.debug('incoming from app', msg) ;
+              switch (msg.type) {
+                case 'AccountRes': receiveAccountRes(msg); break;
+                case 'UrlRes': receiveUrlRes(msg); break;
+                case 'LikeRes': receiveLikeRes(msg); break;
+              }
+          } else {
+              console.debug('incoming from page', msg) ;
+              switch (msg.type) {
+                  case 'OpenApp': openWikaApp(); break;
+                  case 'NewTab': registerNewTab(sender.tab.id, msg.url); break;
+                  case 'NewLike': submitNewLike(sender.tab.id, msg.url, msg.numLikes); break;
+              }
+          }
+      }
+  }
+);
+
+setInterval(checkWikaApp, 1000);
+
+setInterval(trackUrls, 10000);
+
+
+
