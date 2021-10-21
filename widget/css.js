@@ -2,9 +2,12 @@ const CSS_WIDGET = `
 
     .wika-widget-elements {
       all: revert;
-      font-family: system-ui;
     }
-    
+
+    .wika-widget-font {
+      font-family: sans-serif;
+    }
+
     #wika-widget-move-button:hover {
       cursor: move
     }
@@ -19,6 +22,10 @@ const CSS_WIDGET = `
     
     #wika-widget-like-button:hover #wika-widget-like-button-text{
       font-weight: bold;
+    }
+
+    #wika-widget-page-num-likes {
+        font-family: sans-serif
     }
     
 `;

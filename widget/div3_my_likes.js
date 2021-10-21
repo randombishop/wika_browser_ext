@@ -20,7 +20,7 @@ const HTML_DIV3_MY_LIKES = `
             </div>
             <div style="margin-left:10px;line-height:42px">
                 <button id="wika-widget-like-button"
-                        class="wika-widget-elements" 
+                        class="wika-widget-elements wika-widget-font"
                         onclick="likeButtonClicked()"
                         style="height: 32px;
                                width: 120px;
@@ -35,7 +35,7 @@ const HTML_DIV3_MY_LIKES = `
         </div>
         
         <div id="wika-widget-div-already-liked"
-             class="wika-widget-elements"
+             class="wika-widget-elements wika-widget-font"
              style="font-size:16px;
                     color:white;
                     line-height:42px;

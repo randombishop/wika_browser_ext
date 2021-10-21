@@ -25,7 +25,7 @@ let HTML_DIV_WIDGET = `
                 border: solid 1px gray;
                 border-radius: 15px;
                 overflow: hidden;
-                font-family: system-ui">
+                font-family: sans-serif">
 `;
 
 let HTML_WIDGET = HTML_DIV_WIDGET + HTML_DIV1 + HTML_DIV2 + HTML_DIV3 + HTML_DIV4 + HTML_DIV5 + "</div>" ;
